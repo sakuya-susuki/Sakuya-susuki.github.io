@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSAEA</title>
+
+
+
+
+
+
+
+    
+    <!-- CSS样式：实现垂直吸附滚动和平滑滚动效果 -->
+    <style>
+
+  /* 底部固定页脚样式（添加垂直居中） */
+/* 底部固定页脚样式（修复垂直居中：处理 p 标签 margin） */
+.footer {
+    position: fixed;    /* 固定在视口底部 */
+    bottom: 0;          /* 贴到底部 */
+    left: 0;            /* 从左开始 */
+    width: 100%;        /* 全宽覆盖 */
+    background-color: rgba(0, 0, 0, 0.8);  /* 半透明背景，避免遮挡（可选） */
+    text-align: center; /* 文字水平居中 */
+    padding: 10px 0;    /* 上下内边距，增加高度 */
+    z-index: 999;       /* 确保在内容上方 */
+    
+    /* Flexbox 垂直 + 水平居中 */
+    display: flex;
+    justify-content: center;  /* 水平居中 */
+    align-items: center;      /* 垂直居中 */
+    min-height: 50px;         /* 最小高度，确保有空间 */
+}
+
+/* 新增：针对 footer 内 p 标签，重置 margin 避免偏移 */
+.footer p {
+    margin: 0;  /* 移除默认上下 margin，让 Flexbox 纯净居中 */
+    padding: 0; /* 可选：移除 padding，如果有内联 style 冲突 */
+}
+    
+
+      /* 基础 scroll-hint 样式 */
+.scroll-hint {
+    color: #f9f9f9;  /* 整体默认颜色（浅灰白） */
+    text-align: center;
+    font-size: 14px;
+}
+
+/* 单独定义有 href 的链接颜色 */
+.scroll-hint a[href] {
+    color: var( --your-color);  /* 自定义颜色（可选） */
+    text-decoration: none;  /* 移除下划线 */
+    transition: color 0.3s;  /* 平滑过渡 */
+}
+
+/* 有 href 的链接悬停效果 */
+.scroll-hint a[href]:hover {
+    color: #ffffff;  /* 悬停变白 */
+    text-decoration: underline;  /* 加下划线 */
+}
+
+/* 无 href 的链接（可选：保持默认或自定义） */
+.scroll-hint a:not([href]) {
+    color: inherit;  /* 继承父元素颜色（#f9f9f9） */
+    pointer-events: none;  /* 禁用点击，防止误触 */
+}
+
+
+        /* 全局样式重置和基础设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 新添加：网格背景样式（From Uiverse.io by adamgiebl） */
+        .container {
+            width: 100%;
+            height: 100%;
+            --color: rgba(114, 114, 114, 0.3);
+            background-color: #191a1a;
+            background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent),
+                linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
+            background-size: 55px 55px;
+        }
+
+        /* 主体样式：启用垂直吸附滚动和平滑滚动 */
+        body {
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory; /* 垂直方向强制吸附到每个section */
+            scroll-behavior: smooth; /* 平滑滚动效果 */
+        }
+
+        /* 全屏模块样式：每个模块占满视口高度，垂直居中内容 */
+        section {
+            height: 100vh; /* 每个模块占满视口高度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            scroll-snap-align: start; /* 吸附到顶部 */
+            position: relative;
+            padding: 20px;
+            text-align: center; /* 内容居中 */
+        }
+
+        /* 模块1：首页介绍样式 */
+        #module1 {
+            color: #f9f9f9; /* 浅色文字适配暗背景 */
+        }
+        #module1 h1 {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+        #module1 h3 {
+            color: #666;
+            font-size: 1.5rem;
+        }
+
+        /* 模块2：About模块样式 */
+        #module2 {
+            background-color: rgba(255, 255, 255, 0.1); /* 半透明叠加层增强可读性 */
+            color: azure;
+        }
+        #module2 h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #f9f9f9;
+        }
+        #module2 p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* 模块3：Contact模块样式 */
+        #module3 {
+            background-color: rgba(0, 128, 0, 0.2); /* 绿色调叠加层 */
+            color: azure;
+        }
+        #module3 h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #f9f9f9;
+        }
+        #module3 p {
+            font-size: 1.2rem
+            max-width 600px;
+          line-height:1.6;
+        }
+        /* 模块4：声明模块样式 */
+        #module4 {
+            background-color: rgba(210,180,140, 0.2); /* 绿色调叠加层 */
+            color: azure;
+        }
+        #module4 h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #f9f9f9;
+        }
+        #module4 p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            line-height: 1.6;
+            color: #191a1a;
+        }
+
+        /* 导航栏样式：固定顶部，全局可见 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333; /* 深灰背景 */
+            padding: 10px 0;
+            z-index: 1000; /* 确保在最上层 */
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex; /* 水平排列 */
+            justify-content: center; /* 居中 */
+        }
+        nav li {
+            margin: 0 20px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s; /* hover效果 */
+        }
+        nav a:hover {
+            background-color: rgba(0, 128, 0, 0.5); /* 绿色hover背景 */
+        }
+
+        /* 滚动提示样式：只在第一个模块显示，动画提示向下滚 */
+        .scroll-hint {
+            position: absolute;
+            bottom: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            animation: bounce 2s infinite; /* 弹跳动画 */
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+
+
+
+
+
+
+
+
+
+
+<body class="container">
+    
+    <!-- 导航栏模块：固定顶部，全局导航 nav -->
+    <nav>
+        <ul>
+            <!-- 图标占位（可添加<img>或SVG图标） -->
+            <li>
+                <!-- 这里可以放logo图标 -->
+            </li>
+            <!-- 导航栏链接 -->
+            <li><a href="more.html">More</a></li>
+            <li><a href="#module2">About</a></li>
+            <li><a href="#module3">Contact</a></li>
+            <li><a href="signin.html">Sign In</a></li>
+        </ul>
+    </nav>
+
+    <!-- 首页 -->
+    <section id="module1">
+        <!-- 主标题 -->
+        <h1>MSAEA</h1>
+        <!-- 副标题 -->
+        <h3>Don't forget me my Dear</h3>
+
+        <!-- 滚动提示-->
+        <div class="scroll-hint" style="color: #f9f9f9;">
+           <a href="newword.html">夏日夜色渐浓,</a>
+           <a>  春空千鹤幻如梦</a>
+
+        </div>
+    </section>
+
+    <!-- 详情模块 -->
+    <section id="module2">
+        <h2>About Us</h2>
+        <H3>
+            Please do not use your superior abilities and favorable environment solely for personal success; use them to help those who are less fortunate than yourself.
+        </H3>
+
+        <br>
+
+        <p>
+            
+            MASAEA是由Miss.Amemone、Monika二人共同发起的博客，
+            <br>
+            该博客由博客管理人Anemone女士负责运营。
+            博客的主要内容是数据科学、机器学习、数据可视化等等。我们不定期在博客上分享一些关于数据科学、机器学习和数据可视化的文章以及教程。
+            在这里，你可以找到各种有趣的文章和资源，帮助你更好地理解和应用这些技术。让许多人受益。
+            <br>
+            Anemone女士是一位数据科学爱好者，拥有丰富的数据分析和机器学习经验。她热衷于分享知识，帮助更多的人了解和掌握数据科学技术。
+            <br>
+            欢迎访问我们的博客，和我们一起探索数据的世界,如果你喜欢我们的文章，欢迎关注我们的公众号，分享你的想法！
+        </p>
+        <div class="scroll-hint" style="--your-color:#1de7c2;"> 
+            <a href="Anemone.html">想了解数据科学或深入了解Anemone女士请继续阅读...</a>
+        </div>
+    </section>
+
+    <!-- Contact模块 -->
+    <section id="module3">
+        <h2>How to Contact ？
+            <br>
+            <small>
+                如何联系我们？
+            </small>
+        </h2>
+        <p>
+           email:
+           1597349394@qq.com
+           <br>
+              微信公众号：MSAEA博客
+           <br>
+              QQ ：1597349394
+        </p>
+    </section>
+
+    <section id="module4">
+        <p>
+        <h2>声明</h2>
+        本站所有资源均来自互联网，仅供学习和交流使用。如有侵权，请联系管理员删除。
+        转载请注明出处：MSAEA博客
+        <p style="color: rgb(130, 185, 240);">
+            再次声明：本站所有资源均来自互联网，仅供学习和交流使用。如有侵权，请联系管理员删除。
+            同时本站不承担任何因使用本站资源而引起的法律责任。
+        </p> 
+        <div  style='--your-color:#1de7c2;'> 
+            <a href="ruse.html">声明细则</a>
+        </div>
+
+    </section>
+  <body class="container" >
+    <!-- 底部固定页脚 -->
+     <footer class="footer">
+        <p style="color: #f9f9f9;"> 
+        © 2025 Miss.Amemone & Monika. All rights reserved.
+</p>
+     </footer>
+     
+    
+  </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- JavaScript：实现滚轮滑动进入附页效果 -->
+
+        <!--感谢大佬的协助，这里的实现方式是通过监听滚轮事件和触摸事件来实现的 -->
+    <script>
+        // 防抖变量：防止快速多次滚动触发
+        let isScrolling = false;
+
+        // 监听滚轮事件：只在第一个模块向下滚时触发平滑滑动到下一个模块
+        window.addEventListener('wheel', (e) => {
+            if (isScrolling || window.scrollY > 0) return; // 只在首页（scrollY=0）触发
+
+            if (e.deltaY > 0) { // 向下滚动
+                isScrolling = true;
+                // 平滑滚动到第二个模块（100vh高度）
+                document.body.scrollTo({
+                    top: window.innerHeight, // 滚动到下一个全屏模块
+                    behavior: 'smooth'
+                });
+                // 1秒后重置防抖
+                setTimeout(() => { isScrolling = false; }, 1000);
+            }
+        }, { passive: false });
+
+        // 触摸设备支持：手机滑动向下进入
+        let touchStartY = 0;
+        window.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+        window.addEventListener('touchmove', (e) => {
+            if (isScrolling || window.scrollY > 0) return;
+            const touchEndY = e.touches[0].clientY;
+            if (touchStartY - touchEndY > 50) { // 向下触摸阈值50px
+                isScrolling = true;
+                document.body.scrollTo({
+                    top: window.innerHeight,
+                    behavior: 'smooth'
+                });
+                setTimeout(() => { isScrolling = false; }, 1000);
+            }
+        });
+        // 新增：URL 参数自定义颜色（示例：?primary=#00ff00）
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlPrimary = urlParams.get('primary');
+    if (urlPrimary) {
+        document.documentElement.style.setProperty('--primary-color', urlPrimary);
+        // 可选：更新输入框值（如果有自定义面板）
+        if (document.getElementById('primaryInput')) {
+            document.getElementById('primaryInput').value = urlPrimary;
+        }
+    }
+    </script>
+</body>
+</html>
