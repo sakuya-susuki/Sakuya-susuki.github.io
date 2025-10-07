@@ -14,6 +14,11 @@
     
     <!-- CSS样式：实现垂直吸附滚动和平滑滚动效果 -->
     <style>
+        /* 调整导航栏链接字体大小 */
+nav a {
+    font-size: var(--size);  /* 示例：20px（基于16px根字体），可改成18px或1rem */
+    /* 其他现有样式保持不变，如 color、padding 等 */
+}
 
   /* 底部固定页脚样式（添加垂直居中） */
 /* 底部固定页脚样式（修复垂直居中：处理 p 标签 margin） */
@@ -107,6 +112,9 @@
             text-align: center; /* 内容居中 */
         }
 
+
+
+        
         /* 模块1：首页介绍样式 */
         #module1 {
             color: #f9f9f9; /* 浅色文字适配暗背景 */
@@ -213,6 +221,31 @@
             40% { transform: translateY(-10px); }
             60% { transform: translateY(-5px); }
         }
+        /* 导航栏间隔响应式适配：根据屏幕宽度比例调整 */
+nav li {
+    margin: 0 max(1rem, 2vw); /* 基础：最小1rem，比例2%视口宽（自适应） */
+    transition: margin 0.3s ease; /* 平滑过渡，避免突兀 */
+}
+
+/* 移动端进一步优化（≤768px）：缩小比例，垂直堆叠时调整 */
+@media screen and (max-width: 768px) {
+    nav li {
+        margin: 0 max(0.5rem, 1.5vw); /* 移动端缩小比例（1.5%视口宽） */
+    }
+    nav ul {
+        gap: max(0.5rem, 1vw); /* 用 gap 替代 margin（Flexbox 间距，更精确） */
+    }
+}
+
+/* 超小屏（≤480px）：最小间隔，避免挤压 */
+@media screen and (max-width: 480px) {
+    nav li {
+        margin: 0 0.5rem; /* 固定最小值 */
+    }
+    nav ul {
+        gap: 0.5rem;
+    }
+}
     </style>
 </head>
 
@@ -228,7 +261,7 @@
 <body class="container">
     
     <!-- 导航栏模块：固定顶部，全局导航 nav -->
-    <nav>
+    <nav >
         <ul>
             <!-- 图标占位（可添加<img>或SVG图标） -->
             <li>
@@ -238,7 +271,7 @@
             <li><a href="more.html">More</a></li>
             <li><a href="#module2">About</a></li>
             <li><a href="#module3">Contact</a></li>
-            <li><a href="signin.html">Sign In</a></li>
+            <li><a href="signin.html">Sign</a></li>
         </ul>
     </nav>
 
@@ -274,7 +307,7 @@
             博客的主要内容是数据科学、机器学习、数据可视化等等。我们不定期在博客上分享一些关于数据科学、机器学习和数据可视化的文章以及教程。
             在这里，你可以找到各种有趣的文章和资源，帮助你更好地理解和应用这些技术。让许多人受益。
             <br>
-            Anemone女士是一位数据科学爱好者，拥有丰富的数据分析和机器学习经验。她热衷于分享知识，帮助更多的人了解和掌握数据科学技术。
+            Anemone女士是一位数据科学爱好者，拥有足量的数据分析和机器学习经验。她热衷于分享知识，帮助更多的人了解和掌握数据科学技术。
             <br>
             欢迎访问我们的博客，和我们一起探索数据的世界,如果你喜欢我们的文章，欢迎关注我们的公众号，分享你的想法！
         </p>
