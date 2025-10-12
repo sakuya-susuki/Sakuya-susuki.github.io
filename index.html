@@ -1,567 +1,543 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- 基础元数据 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no">
-    <title>MSAEA</title>
+    <title>MSAEA</title>MSAEA
 
-
-
-
-
-
-
-    
-<!-- CSS样式：实现垂直吸附滚动和平滑滚动效果 -->
+    <!-- CSS 样式表：实现垂直吸附滚动、网格背景、导航栏、模块布局等效果 -->
     <style>
-        
-    
+        /* ===========================================
+           1. CSS 变量定义（全局主题变量，便于统一修改颜色、字体、大小）
+           =========================================== */
+        :root {
+            --primary-color: #5ed9c0; /* 默认链接颜色，可通过 URL 参数动态覆盖 */
+            --font-size-nav: 1.2rem; /* 导航字体大小 */
+            --font-size-title: 4rem; /* 主标题大小 */
+            --font-size-subtitle: 3rem; /* 副标题大小 */
+            --font-size-text: 1.2rem; /* 段落字体大小 */
+            --grid-bg-color: rgba(106, 92, 92, 0.3); /* 网格线颜色 */
+            --grid-size: 55px; /* 网格大小（响应式中可覆盖） */
+            --nav-bg: #333; /* 导航背景 */
+            --hover-bg: rgba(0, 128, 0, 0.5); /* hover 背景 */
+            --footer-bg: rgba(0, 0, 0, 0.8); /* 页脚背景 */
+            --position: fixed; /* 位置属性（可扩展） */
+        }
 
-        
-        /* 调整导航栏链接字体大小 */
-nav a {
-    font-size: var(--size);  /* 示例：20px（基于16px根字体），可改成18px或1rem */
-    /* 其他现有样式保持不变，如 color、padding 等 */
-}
-
-  /* 底部固定页脚样式（添加垂直居中） */
-/* 底部固定页脚样式（修复垂直居中：处理 p 标签 margin） */
-.footer {
-    position: fixed;    /* 固定在视口底部 */
-    bottom: 0;          /* 贴到底部 */
-    left: 0;            /* 从左开始 */
-    width: 100%;        /* 全宽覆盖 */
-    background-color: rgba(0, 0, 0, 0.8);  /* 半透明背景，避免遮挡（可选） */
-    text-align: center; /* 文字水平居中 */
-    padding: 10px 0;    /* 上下内边距，增加高度 */
-    z-index: 999;       /* 确保在内容上方 */
-    
-    /* Flexbox 垂直 + 水平居中 */
-    display: flex;
-    justify-content: center;  /* 水平居中 */
-    align-items: center;      /* 垂直居中 */
-    min-height: 50px;         /* 最小高度，确保有空间 */
-}
-
-/* 新增：针对 footer 内 p 标签，重置 margin 避免偏移 */
-.footer p {
-    margin: 0;  /* 移除默认上下 margin，让 Flexbox 纯净居中 */
-    padding: 0; /* 可选：移除 padding，如果有内联 style 冲突 */
-}
-    
-
-      /* 基础 scroll-hint 样式 */
-.scroll-hint {
-    color: #f9f9f9;  /* 整体默认颜色（浅灰白） */
-    text-align: center;
-    font-size: 14px;
-}
-
-/* 单独定义有 href 的链接颜色 */
-.scroll-hint a[href] {
-    color: var( --your-color);  /* 自定义颜色（可选） */
-    text-decoration: none;  /* 移除下划线 */
-    transition: color 0.3s;  /* 平滑过渡 */
-}
-
-/* 有 href 的链接悬停效果 */
-.scroll-hint a[href]:hover {
-    color: #ffffff;  /* 悬停变白 */
-    text-decoration: underline;  /* 加下划线 */
-}
-
-/* 无 href 的链接（可选：保持默认或自定义） */
-.scroll-hint a:not([href]) {
-    color: inherit;  /* 继承父元素颜色（#f9f9f9） */
-    pointer-events: none;  /* 禁用点击，防止误触 */
-}
-
-
-        /* 全局样式重置和基础设置 */
+        /* ===========================================
+           2. 全局重置和基础设置（统一浏览器默认样式，提高一致性）
+           =========================================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* 新添加：网格背景样式（From Uiverse.io by adamgiebl） */
-        .container {
-            width: 100%;
-            height: 100%;
-            --color: rgba(114, 114, 114, 0.3);
-            background-color: #191a1a;
-            background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent),
-                linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
-            background-size: 55px 55px;
-        }
-
-        /* 主体样式：启用垂直吸附滚动和平滑滚动 */
         body {
             font-family: Arial, sans-serif;
             overflow-x: hidden;
-            scroll-snap-type: y mandatory; /* 垂直方向强制吸附到每个section */
-            scroll-behavior: smooth; /* 平滑滚动效果 */
+            scroll-snap-type: y mandatory; /* 垂直吸附滚动 */
+            scroll-behavior: smooth; /* 平滑滚动 */
+            padding-top: 70px; /* 避开固定导航栏遮挡 */
+            color: #f9f9f9; /* 默认文字颜色，适配暗主题 */
+        }
+      
+
+        /* ===========================================
+           3. 背景和网格样式（Uiverse.io 网格背景，扩展时可添加更多主题）
+           =========================================== */
+        .container {
+            width: 100%;
+            height: 100%;
+            background-color: #191a1a; /* 暗黑主背景 */
+            background-image: 
+                linear-gradient(0deg, transparent 24%, var(--grid-bg-color) 25%, var(--grid-bg-color) 26%, transparent 27%, transparent 74%, var(--grid-bg-color) 75%, var(--grid-bg-color) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, var(--grid-bg-color) 25%, var(--grid-bg-color) 26%, transparent 27%, transparent 74%, var(--grid-bg-color) 75%, var(--grid-bg-color) 76%, transparent 77%, transparent);
+            background-size: var(--grid-size);
         }
 
-        /* 全屏模块样式：每个模块占满视口高度，垂直居中内容 */
+        /* ===========================================
+           4. 布局组件：模块（section）和分隔线（扩展新模块只需复制 section 规则）
+           =========================================== */
         section {
-            height: 100vh; /* 每个模块占满视口高度 */
+            height: 100vh; /* 全屏高度 */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            scroll-snap-align: start; /* 吸附到顶部 */
+            scroll-snap-align: start; /* 吸附顶部 */
             position: relative;
-            padding: 20px;
-            text-align: center; /* 内容居中 */
+            padding:10px;
+            text-align: center;
         }
 
-/*添加视觉分隔线 */
-section {
-    /* ... 现有样式保持不变 ... */
-    position: relative; /* 已存在，确保伪元素定位 */
-}
-
-section::after {
-    content: ''; /* 伪元素内容为空 */
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 4px; /* 分隔线高度，可调整 */
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent); /* 渐变线条效果，半透明白 */
-
-    pointer-events: none; /* 不干扰交互 */
-}
-
-/* 最后一个模块无分隔线，避免多余 */
-#module4::after {
-    display: none;
-}
-
-/* 响应式：小屏下缩小分隔线 */
-@media screen and (max-width: 768px) {
-    section::after {
-        height: 2px; /* 缩小高度 */
-    }
-}
-
-
-
-/*板块部分*/
-        /* 模块1：首页介绍样式 */
-        #module1 {
-            color: #f9f9f9; /* 浅色文字适配暗背景 */
-        }
-        #module1 h1 {
-            font-size: 4rem;
-            margin-bottom: 10px;
-        }
-        #module1 h3 {
-            color: #666;
-            font-size: 1.5rem;
+        /* 模块分隔线：伪元素实现，扩展时可为新 section 加 ID 覆盖 */
+        section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            pointer-events: none;
         }
 
-        /* 模块2：About模块样式 */
-        #module2 {
-            background-color: rgba(21, 160, 198, 0.1); /* 半透明叠加层增强可读性 */
-            color: azure;
+        /* 最后一个模块无分隔线 */
+        #module4::after {
+            display: none;
         }
-        #module2 h2 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #f9f9f9;
-        }
-        #module2 p {
-            font-size: 1.2rem;
-            max-width: 600px;
+
+        /* 通用文字样式（h1-h5, p）：便于全局调整 */
+        h1 { font-size: var(--font-size-title); margin-bottom: 10px; color: #f9f9f9; }
+        h2 { font-size: var(--font-size-subtitle); margin-bottom: 20px; color: #f9f9f9; }
+        h3, h4, h5 { font-size: var(--font-size-text); margin: 10px 0; color: #666; }
+        p { font-size: var(--font-size-text); max-width: 600px; line-height: 1.6; }
+
+        /* 内容块：用于嵌套 h3/h5，避免 p 嵌套问题 */
+        .content-block {
+            font-size: var(--font-size-text);
             line-height: 1.6;
+            text-align: left; /* 长文本左对齐，便于阅读 */
         }
 
-        /* 模块3：Contact模块样式 */
-        #module3 {
-            background-color: rgba(0, 128, 0, 0.2); /* 绿色调叠加层 */
-            color: azure;
-        }
-        #module3 h2 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #f9f9f9;
-        }
-        #module3 p {
-            font-size: 1.2rem
-            max-width 600px;
-          line-height:1.6;
-        }
-        /* 模块4：声明模块样式 */
-        #module4 {
-            background-color: rgba(210,180,140, 0.2); /* 绿色调叠加层 */
-            color: azure;
-        }
-        #module4 h2 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #f9f9f9;
-        }
-        #module4 p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            line-height: 1.6;
-            color: #191a1a;
-        }
 
-        /* 导航栏样式：固定顶部，全局可见 */
-        nav {
+
+
+        /* ===========================================
+           5. 导航栏组件（固定顶部，logo 左对齐，链接右对齐；扩展新链接只需加 li）
+           =========================================== */
+        .navbar {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            background-color: #333; /* 深灰背景 */
+            background-color: var(--nav-bg);
+            z-index: 1000;
             padding: 10px 0;
-            z-index: 1000; /* 确保在最上层 */
         }
-        nav ul {
+
+        .nav-list {
             list-style: none;
             margin: 0;
-            padding: 0;
- /* 水平排列 */           
-            display: flex; 
-/* 居中 */
-            /* justify-content: center;  */
-/* 靠右 */
-            justify-content: right;
-
-
+            padding: 0 20px;
+            display: flex;
+            justify-content: flex-end; /* 链接右对齐 */
+            align-items: center;
         }
-        nav li {
-            margin: 0 20px;
+
+        .logo-left {
+            margin-left: 0 !important;
+            margin-right: auto; /* 推链接到右 */
+            flex-shrink: 0;
         }
-        nav a {
+
+        .logo-left a {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f9f9f9;
+            text-decoration: none;
+            padding: 10px 15px;
+        }
+
+        .nav-list a {
             color: white;
             text-decoration: none;
-            font-size: 18px;
+            font-size: var(--font-size-nav);
             padding: 10px 15px;
             border-radius: 5px;
-            transition: background-color 0.3s; /* hover效果 */
-        }
-        nav a:hover {
-            background-color: rgba(0, 128, 0, 0.5); /* 绿色hover背景 */
+            transition: background-color 0.3s;
+            display: block; /* 块级，便于 hover */
         }
 
-        /* 滚动提示样式：只在第一个模块显示，动画提示向下滚 */
+        .nav-list a:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .nav-list li:not(.logo-left) {
+            margin: 0 10px;
+        }
+
+        /* ===========================================
+           6. 滚动提示组件（.scroll-hint：动画 + 链接颜色；扩展时加更多 a）
+           =========================================== */
         .scroll-hint {
             position: absolute;
             bottom: 20px;
             color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
-            animation: bounce 2s infinite; /* 弹跳动画 */
+            text-align: center;
+            animation: bounce 2s infinite;
         }
+
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
             40% { transform: translateY(-10px); }
             60% { transform: translateY(-5px); }
         }
-        /* 导航栏间隔响应式适配：根据屏幕宽度比例调整 */
 
-nav li {
-    margin: 0 max(1rem, 2vw); /* 基础：最小1rem，比例2%视口宽（自适应） */
-    transition: margin 0.3s ease; /* 平滑过渡，避免突兀 */
+        .scroll-hint a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .scroll-hint a[href]:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .scroll-hint a:not([href]) {
+            color: inherit;
+            pointer-events: none;
+        }
+
+        /* ===========================================
+           7. 页脚组件（固定底部，居中；扩展时加更多 p 或链接）
+           =========================================== */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--footer-bg);
+            text-align: center;
+            padding: 10px 0;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50px;
+        }
+
+        .footer p {
+            margin: 0;
+            padding: 0;
+            color: #f9f9f9;
+            font-size: 14px;
+        }
+
+        /* ===========================================
+           8. 模块特定样式（每个 ID 独立，便于扩展新模块如 #module5）
+           =========================================== */
+        #module1 {
+            color: #f9f9f9;
+            
+        }
+
+        #module2 {
+            background-color: rgba(21, 160, 198, 0.1);
+            color: azure;
+        }
+
+        #module3 {
+            background-color: rgba(0, 128, 0, 0.2);
+            color: azure;
+        }
+
+        #module4 {
+            background-color: rgba(210, 180, 140, 0.2);
+            color: azure;
+        }
+
+        #module4 p:last-of-type {
+            color: rgb(130, 185, 240); /* 特定 p 颜色覆盖 */
+        }
+
+        /* ===========================================
+           9. 响应式设计（媒体查询分组：移动端优化布局、字体、间距；扩展断点易加）
+           =========================================== */
+        /* 移动端通用（≤768px）：垂直导航、缩小字体 */
+        @media screen and (max-width: 768px) {
+            :root {
+                --grid-size: 30px; /* 网格缩小 */
+                --font-size-title: 2.5rem;
+                --font-size-subtitle: 2rem;
+                --font-size-text: 1rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            nav li {
+                margin: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            nav a {
+                padding: 15px;
+                font-size: 1rem;
+            }
+
+            section {
+                height: auto;
+                min-height: 100vh;
+                padding: 10px;
+            }
+
+            .logo-li { /* 移动端隐藏 logo（如果加 class="logo-li" 到 logo li） */
+                display: none;
+            }
+
+            .scroll-hint {
+                position: static;
+                margin-top: 20px;
+            }
+        }
+
+        /* 超小屏（≤480px）：进一步紧凑 */
+        @media screen and (max-width: 480px) {
+            :root {
+                --font-size-nav: 0.9rem;
+            }
+
+            nav a {
+                padding: 10px;
+            }
+
+            section {
+                padding: 5px;
+            }
+
+            p {
+                max-width: 100%;
+            }
+        }
+
+        /* iPhone SE 特定（375x667）：极致优化 */
+        @media screen and (max-width: 375px) and (max-height: 667px) {
+            nav a {
+                font-size: 14px;
+                padding: 8px 10px;
+            }
+
+            nav ul {
+                gap: 0.3rem;
+                padding: 5px 0;
+            }
+
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.8rem; }
+            p { font-size: 0.95rem; max-width: 90%; }
+            .scroll-hint { font-size: 12px; }
+            .footer { min-height: 40px; font-size: 12px; padding: 5px 0; }
+        }
+/* 自定义模块 */
+
+          /* 自定义颜色模块 */
+        .all-color {
+            color: var(--primary-color);
+        }
+        .a[href]{
+            color: var(--primary-color);
+        }
+        /* 位置模块 */
+        .position-top {
+            position: var(--position); 
+        }
+
+        /* 居中 */
+        .position-center {
+        display: flex;           /* 启用 Flexbox（容器必须） */
+        justify-content: center; /* 水平居中子元素 */
+        align-items: center;     /* 垂直居中子元素 */
+        text-align: center;      /* 文字备用居中 */
+        width: 100%;             /* 容器全宽 */
+        min-height: 50px;        /* 给最小高度，确保垂直居中有空间 */
+        /* 覆盖 scroll-hint 的 bottom 定位（如果冲突） */
+        position: relative;      /* 或 static，避免 absolute 干扰 */
+        bottom: auto;            /* 移除固定底部，让它在 section 内自由 */
+                             }
+        
+        /* 容器：给相对定位参考 */
+.link-container {
+    position: relative;  /* 父参考 */
+    height: 100px;       /* 给空间（可调整） */
+    width: 100%;         /* 全宽 */
 }
 
-/* 响应式布局：根据屏幕宽度调整布局 */
-
-/* 移动端进一步优化（≤768px）：缩小比例，垂直堆叠时调整 */
-@media screen and (max-width: 768px) {
-    nav li {
-        margin: 0 max(0.5rem, 1.5vw); /* 移动端缩小比例（1.5%视口宽） */
-    }
-    nav ul {
-        gap: max(0.5rem, 1vw); /* 用 gap 替代 margin（Flexbox 间距，更精确） */
-    }
+/* 链接居中：绝对定位 + transform */
+.centered-link {
+    position: absolute;  /* 绝对定位 */
+    top: 50%;            /* 垂直 50% */
+    left: 50%;           /* 水平 50% */
+    transform: translate(-50%, -50%);  /* 偏移 -50%，精确中心 */
+    color: #ba7878;      /* 你的自定义色 */
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 1;          /* 层级，避免重叠 */
 }
 
-/* 超小屏（≤480px）：最小间隔，避免挤压 */
-@media screen and (max-width: 480px) {
-    nav li {
-        margin: 0 0.5rem; /* 固定最小值 */
-    }
-    nav ul {
-        gap: 0.5rem;
-    }
+.centered-link:hover {
+    color: #ffffff;
+    background: rgba(186, 120, 120, 0.3);
 }
 
-/* 新增：针对375x667尺寸（典型iPhone SE/竖屏手机）的优化 */
-@media screen and (max-width: 375px) and (max-height: 667px) {
-    /* 导航栏：进一步缩小字体和间距，防止溢出 */
-    nav a {
-        font-size: 14px;  /* 缩小字体 */
-        padding: 8px 10px;  /* 缩小内边距 */
-    }
-    nav ul {
-        gap: 0.3rem;  /* 更小间距 */
-        padding: 5px 0;  /* 减少导航整体高度 */
-    }
-
-    /* 模块通用：减少padding，调整标题/文本大小，确保内容不溢出 */
-    section {
-        padding: 10px;  /* 缩小内边距 */
-    }
-
-    /* 标题调整：比例缩小，防止过大 */
-    h1 {
-        font-size: 2.5rem;  /* 从4rem缩小 */
-    }
-    h2 {
-        font-size: 2rem;  /* 从3rem缩小 */
-    }
-    h3 {
-        font-size: 1.2rem;  /* 从1.5rem缩小 */
-    }
-
-    /* 段落：缩小字体，减少max-width（适应窄屏） */
-    p {
-        font-size: 1rem;  /* 从1.2rem缩小 */
-        max-width: 90%;  /* 占满宽度，避免过窄 */
-        line-height: 1.5;  /* 稍紧凑行高 */
-        padding: 0 10px;  /* 添加侧边内边距 */
-    }
-
-    /* 滚动提示：缩小字体，调整位置 */
-    .scroll-hint {
-        font-size: 12px;
-        bottom: 10px;  /* 贴近底部，避免与页脚重叠 */
-    }
-
-    /* 页脚：增加最小高度，确保可见 */
-    .footer {
-        min-height: 40px;  /* 稍小，但确保不挤压 */
-        padding: 5px 0;
-        font-size: 12px;  /* 缩小字体 */
-    }
-
-    /* 背景网格：简化大小，减少计算负担 */
-    .container {
-        background-size: 30px 30px;  /* 缩小网格，适应小屏 */
-    }
-
-    /* 模块特定：About段落多行时，确保不溢出 */
-    #module2 p, #module3 p, #module4 p {
-        text-align: left;  /* 左对齐，便于阅读长文本 */
-        hyphens: auto;  /* 自动断词 */
-    }
-}
-
-/* logo 隐藏逻辑 - PC 显示，移动端隐藏 */
-
-.logo-li {  /* 假设给 logo 的 li 添加 class="logo-li" */
-    display: block;  /* PC 默认显示 */
-}
-
-/* 移动端隐藏 logo */
-@media screen and (max-width: 768px) {
-    .logo-li {
-        display: none;  /* 移动端不显示 */
-    }
-}
-
-/* 可选：超小屏进一步优化（如果需要） */
-@media screen and (max-width: 480px) {
-    .logo-li {
-        display: none;  /* 确保隐藏 */
-    }
-}
     </style>
+
 </head>
 
-/* 主体内容 */
-
 <body class="container">
-    
-<!-- 导航栏模块：固定顶部，全局导航 nav -->
-    <nav >
-        <ul>
-
-
-<!-- 图标占位（可添加<img>或SVG图标） -->
-<li class="logo-li">
-    <a href="index.html">
-        MSAEA  <!-- 文字 logo，可选保留 -->
-        <!-- 取消 -->
-
-        <!-- <img src="images/logo.jpg" alt="MSAEA Logo">  图片 logo，路径修正 -->
-    </a>
-    <!-- logo图标：可选，如果想纯图片，可删掉文字 -->
-</li>
-
-
-<!-- 导航栏链接 -->
+    <!-- ===========================================
+         导航栏模块：固定顶部，logo 左对齐，链接右对齐
+         扩展：添加新 li 即可；响应式自动竖排
+         =========================================== -->
+    <nav class="navbar">
+        <ul class="nav-list">
+            <!-- Logo：左对齐（加 class="logo-li" 以支持移动隐藏） -->
+            <li class="logo-left logo-li">
+                <a href="index.html">
+                    MSAEA <!-- 文字 logo -->
+                    <!-- <img src="images/logo.jpg" alt="MSAEA Logo"> 图片版（取消注释用） -->
+                </a>
+            </li>
+            <!-- 导航链接：右对齐组 -->
             <li><a href="more.html">More</a></li>
             <li><a href="#module2">About</a></li>
             <li><a href="#module3">Contact</a></li>
-            <li><a href="signin.html">Sign</a></li>
+            <li><a href="signin.html">Sign In</a></li>
         </ul>
     </nav>
 
-<!-- 首页 -->
+    <!-- ===========================================
+         首页模块 (#module1)：介绍标题 + 滚动提示
+         扩展：添加新元素到 section 内
+         =========================================== -->
     <section id="module1">
-<!-- 主标题 -->
         <h1>MSAEA</h1>
-<!-- 副标题 -->
         <h3>free learmingr</h3>
-
-<!-- 滚动提示-->
-        <div class="scroll-hint" style="color: #f9f9f9;">
-           <a href="newword.html">夏日夜色渐浓,</a>
-           <a>  春空千鹤幻如梦</a>
-
+        <!-- 滚动提示：引导向下 -->
+        <div class="scroll-hint" 
+        style="--primary-color: #ca8585;">
+            <a href="newword.html">夏日夜色渐浓,</a>
+            <a>春空千鹤幻如梦</a>
         </div>
     </section>
 
-<!-- 详情模块 -->
+    <!-- ===========================================
+         详情模块 (#module2)：About Us 内容
+         扩展：用 .content-block 包裹新段落
+         =========================================== -->
     <section id="module2">
         <h2>About Us</h2>
-        <H4>
-            Please do not use your superior abilities and favorable environment solely for personal success; use them to help those who are less fortunate than yourself.
-        </H4>
+        <h4>Please do not use your superior abilities and favorable environment solely for personal success; use them to help those who are less fortunate than yourself.</h4>
         <br>
-
-        <p>      
+        <div class="content-block">
             MASAEA是由Miss.Amemone、Monika二人共同发起的博客，
             <br>
-
-            <h3>
-                该博客由博客管理人Anemone女士负责运营。
-            
-            </h3>
-
-            博客的主要内容是数据科学、机器学习、数据可视化等等。我们不定期在博客上分享一些关于数据科学、机器学习和数据可视化的文章以及教程。
-            在这里，你可以找到各种有趣的文章和资源，帮助你更好地理解和应用这些技术。让许多人受益。
-            <br>
+            <h3>该博客由博客管理人Anemone女士负责运营,Monika提供技术支持。</h3>
+            博客的主要内容是数据科学、机器学习、数据可视化等等。我们不定期在博客上分享一些关于数据科学、机器学习和数据可视化的文章以及教程。数据科学，还有发布许多的其他文章以及资源，尽可能让每个人都能找到自己喜欢的话题和文章。在这里，你可以找到各种的文章和资源，也希望能帮助你更好地理解和应用一些技术。让许多人受益。
+            <br >
             Anemone女士是一位数据科学爱好者，拥有足量的数据分析和机器学习经验。她热衷于分享知识，帮助更多的人了解和掌握数据科学技术。
             <br>
-            <h5>
-            欢迎访问我们的博客，和我们一起探索数据的世界,如果你喜欢我们的文章，欢迎关注我们的公众号，分享你的想法！
-           </h5>
-        </p>
-               <div class="scroll-hint" style="--your-color:#1de7c2;"> 
-            <a href="Anemone.html">
-                想了解数据科学或深入了解Anemone女士请继续阅读...</a>
+            <h5>欢迎访问我们的博客，和我们一起探索数据的世界,如果你喜欢我们的文章，欢迎关注我们的公众号，分享你的想法！</h5>
         </div>
-        
-
+        <!-- 继续阅读提示 -->
+        <div class="scroll-hint">
+            <a href="Anemone.html">想了解数据科学或深入了解Anemone女士请继续阅读...</a>
+        </div>
     </section>
 
-<!-- Contact模块 -->
+    <!-- ===========================================
+         Contact 模块 (#module3)：联系方式
+         扩展：添加表单或图标
+         =========================================== -->
     <section id="module3">
-        <h2>How to Contact ？
-            <br>
-            <small>
-                如何联系我们？
-            </small>
-        </h2>
+        <h2>How to Contact ？<br><small>如何联系我们？</small></h2>
         <p>
-           email:
-           1597349394@qq.com
-           <br>
-              微信公众号：MSAEA博客
-           <br>
-              QQ ：1597349394
+            email: 1597349394@qq.com<br>
+            微信公众号：MSAEA博客<br>
+            QQ：1597349394
         </p>
-
     </section>
-<!-- 文本-->
+
+    <!-- ===========================================
+         声明模块 (#module4)：免责声明
+         扩展：添加更多 p 或链接
+         =========================================== -->
     <section id="module4">
-        <p>
         <h2>声明</h2>
-        本站所有资源均来自互联网，仅供学习和交流使用。如有侵权，请联系管理员删除。
-        转载请注明出处：MSAEA博客
-        <p style="color: rgb(130, 185, 240);">
+        <p>
+            本站所有资源均来自互联网，仅供学习和交流使用。如有侵权，请联系管理员删除。
+            转载请注明出处：MSAEA博客
+        </p>
+        <p>
             再次声明：本站所有资源均来自互联网，仅供学习和交流使用。如有侵权，请联系管理员删除。
             同时本站不承担任何因使用本站资源而引起的法律责任。
-        </p> 
-        <div  style='--your-color:#1de7c2;'> 
-            <a href="ruse.html">声明细则</a>
-        </div>
-
+        </p>
+        <!-- 细则链接 -->
+        <div class="link-container" style="--primary-color: #ba7878;">
+    <a href="ruse.html" class="centered-link">声明细则</a>  
+</div>
     </section>
-  <body class="container" >
 
-<!-- 底部固定页脚 -->
-     <footer class="footer">
-        <p style="color: #f9f9f9;"> 
-        © 2025 Miss.Amemone & Monika. All rights reserved.
-</p>
-     </footer>
-     
-    
-  </body>
+    <!-- ===========================================
+         页脚：固定底部版权
+         扩展：添加社交链接
+         =========================================== -->
+    <footer class="footer">
+        <p>© 2025 Miss.Amemone & Monika. All rights reserved.</p>
+    </footer>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- JavaScript：实现滚轮滑动进入附页效果 -->
-
-        <!--感谢Monika的技术支持，这里的实现方式是通过监听滚轮事件和触摸事件来实现的 -->
+    <!-- ===========================================
+         JavaScript：滚轮/触摸滑动、URL 参数颜色覆盖
+         扩展：添加新事件监听函数
+         =========================================== -->
+    <!-- 感谢 Monika 的技术支持：通过监听滚轮/触摸事件实现滑动 -->
     <script>
-        // 防抖变量：防止快速多次滚动触发
+        // 全局变量：防抖和触摸起始 Y
         let isScrolling = false;
+        let touchStartY = 0;
 
-        // 监听滚轮事件：只在第一个模块向下滚时触发平滑滑动到下一个模块
+        // 函数：平滑滚动到下一个模块（可复用，扩展时调用）
+        function scrollToNextModule() {
+            if (isScrolling) return;
+            isScrolling = true;
+            document.body.scrollTo({
+                top: window.innerHeight,
+                behavior: 'smooth'  // 平滑效果
+            });
+            setTimeout(() => { isScrolling = false; }, 1000);  // 1s 防抖
+        }
+
+        // 事件：滚轮向下触发滑动（仅首页）
         window.addEventListener('wheel', (e) => {
-            if (isScrolling || window.scrollY > 0) return; // 只在首页（scrollY=0）触发
-
-            if (e.deltaY > 0) { // 向下滚动
-                isScrolling = true;
-                // 平滑滚动到第二个模块（100vh高度）
-                document.body.scrollTo({
-                    top: window.innerHeight, // 滚动到下一个全屏模块
-                    behavior: 'auto'
-                });
-                // 1秒后重置防抖
-                setTimeout(() => { isScrolling = false; }, 1000);
-            }
+            if (isScrolling || window.scrollY > 0) return;
+            if (e.deltaY > 0) scrollToNextModule();
         }, { passive: false });
 
-        // 触摸设备支持：手机滑动向下进入
-        let touchStartY = 0;
+        // 事件：触摸向下触发滑动（移动端）
         window.addEventListener('touchstart', (e) => {
             touchStartY = e.touches[0].clientY;
         });
         window.addEventListener('touchmove', (e) => {
             if (isScrolling || window.scrollY > 0) return;
             const touchEndY = e.touches[0].clientY;
-            if (touchStartY - touchEndY > 50) { // 向下触摸阈值50px
-                isScrolling = true;
-                document.body.scrollTo({
-                    top: window.innerHeight,
-                    behavior: 'smooth'
-                });
-                setTimeout(() => { isScrolling = false; }, 1000);
+            if (touchStartY - touchEndY > 50) {  // 阈值 50px
+                scrollToNextModule();
             }
         });
-        // 新增：URL 参数自定义颜色（示例：?primary=#00ff00）
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlPrimary = urlParams.get('primary');
-    if (urlPrimary) {
-        document.documentElement.style.setProperty('--primary-color', urlPrimary);
-        // 可选：更新输入框值（如果有自定义面板）
-        if (document.getElementById('primaryInput')) {
-            document.getElementById('primaryInput').value = urlPrimary;
+
+        // 函数：URL 参数覆盖颜色（扩展主题时用）
+        function applyUrlTheme() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlPrimary = urlParams.get('primary');
+            if (urlPrimary) {
+                document.documentElement.style.setProperty('--primary-color', urlPrimary);
+                // 可扩展：更新 UI 元素
+                const input = document.getElementById('primaryInput');
+                if (input) input.value = urlPrimary;
+            }
         }
-    }
+
+        // 初始化：加载时应用主题
+        applyUrlTheme();
     </script>
 </body>
 </html>
