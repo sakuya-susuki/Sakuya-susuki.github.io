@@ -103,4 +103,9 @@ theme: landscape
 deploy:
   type: git
   repository: git@github.com:sakuya-susuki/Sakuya-susuki.github.io.git
-  branch: MSAEABlog
+  branch: 
+  
+# _config.yml
+# 添加重定向插件配置
+redirects:
+  some-path: /BLOG/public/index.html
